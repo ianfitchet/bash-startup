@@ -1,0 +1,30 @@
+bootstrap_home="${BASH_ARGV[0]%/*}"
+
+FPATH="${FPATH+${FPATH}:}${bootstrap_home}"
+
+stderr ()
+{
+    echo $* >&2
+}
+
+notice ()
+{
+    stderr "NOTICE: $*"
+}
+
+warn ()
+{
+    stderr "WARNING: $*"
+}
+
+error ()
+{
+    stderr "ERROR: $*"
+}
+
+source "${bootstrap_home}"/require.bash
+
+# Local Variables:
+# mode: Shell-script
+# buffer-file-coding-system: undecided-unix
+# End:
