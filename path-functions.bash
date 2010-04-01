@@ -12,9 +12,7 @@ path_append ()
 
     typeset d
     for d in "${in[@]}" ; do
-	if [ -d "${d}" ] ; then
-	    eval ${v}=\"${!v+${!v}${sep}}${d}\"
-	fi
+	eval ${v}=\"${!v+${!v}${sep}}${d}\"
     done
 }
 
@@ -29,9 +27,7 @@ path_prepend ()
 
     typeset d
     for d in "${in[@]}" ; do
-	if [ -d "${d}" ] ; then
-	    eval ${v}=\"${d}${!v+${sep}${!v}}\"
-	fi
+	eval ${v}=\"${d}${!v+${sep}${!v}}\"
     done
 }
 
