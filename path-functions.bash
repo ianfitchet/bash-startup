@@ -3,109 +3,118 @@
 
 path_append ()
 {
-    typeset v=$1
-    typeset p="$2"
-    typeset sep=:
+    typeset var=$1
+    typeset val="$2"
+    typeset sep="${3:-:}"
     
-    typeset in
-    eval in=( $(IFS=${sep} ; set -- ${p} ; for d in "$@" ; do echo \"$d\" ; done) )
+    typeset dirs
+    eval dirs=( $(IFS=${sep} ; set -- ${val} ; for dir in "$@" ; do echo \"${dir}\" ; done) )
 
-    typeset d
-    for d in "${in[@]}" ; do
-	eval ${v}=\"${!v+${!v}${sep}}${d}\"
+    typeset dir
+    for dir in "${dirs[@]}" ; do
+	eval ${var}=\"${!var+${!var}${sep}}${dir}\"
     done
 }
 
 path_prepend ()
 {
-    typeset v=$1
-    typeset p="$2"
-    typeset sep=:
+    typeset var=$1
+    typeset val="$2"
+    typeset sep="${3:-::}"
     
-    typeset in
-    eval in=( $(IFS=${sep} ; set -- ${p} ; for d in "$@" ; do echo \"$d\" ; done) )
+    typeset dirs
+    eval dirs=( $(IFS=${sep} ; set -- ${val} ; for dir in "$@" ; do echo \"${dir}\" ; done) )
 
-    typeset d
-    for d in "${in[@]}" ; do
-	eval ${v}=\"${d}${!v+${sep}${!v}}\"
+    typeset dir
+    for dir in "${dirs[@]}" ; do
+	eval ${var}=\"${dir}${!var+${sep}${!var}}\"
     done
 }
 
 path_remove ()
 {
-    typeset v=$1
-    typeset p="$2"
-    typeset sep=:
+    typeset var=$1
+    typeset val="$2"
+    typeset sep="${3:-:}"
     
-    typeset in
-    eval in=( $(IFS=${sep} ; set -- ${!v} ; for d in "$@" ; do echo \"$d\" ; done) )
+    typeset dirs
+    eval dirs=( $(IFS=${sep} ; set -- ${!var} ; for dir in "$@" ; do echo \"${dir}\" ; done) )
 
     typeset i
-    typeset max=${#in[*]}
+    typeset max=${#dirs[*]}
     for (( i=0 ; i < ${max} ; i++ )) ; do
-	if [ "${in[$i]}" = "$p" ] ; then
-	    unset in[$i]
+	if [ "${dirs[$i]}" = "${val}" ] ; then
+	    unset dirs[$i]
 	fi
     done
 
-    eval ${v}=\"$(IFS=${sep}; echo "${in[*]}")\"
+    eval ${var}=\"$(IFS=${sep}; echo "${dirs[*]}")\"
 }
 
 path_trim ()
 {
-    typeset v=$1
-    typeset sep=:
+    typeset var=$1
+    typeset sep="${2:-:}"
     
-    typeset in
-    eval in=( $(IFS=${sep} ; set -- ${!v} ; for d in "$@" ; do echo \"$d\" ; done) )
+    typeset dirs
+    eval dirs=( $(IFS=${sep} ; set -- ${!var} ; for dir in "$@" ; do echo \"${dir}\" ; done) )
 
     typeset i
-    typeset max=${#in[*]}
+    typeset max=${#dirs[*]}
     typeset seen=
     for (( i=0 ; i < ${max} ; i++ )) ; do
 	case "${sep}${seen}${sep}" in
-	*"${sep}${in[$i]}${sep}"*)
-	    unset in[$i]
+	*"${sep}${dirs[$i]}${sep}"*)
+	    unset dirs[$i]
 	    ;;
 	*)
-	    seen="${seen+${seen}${sep}}${in[$i]}"
+	    seen="${seen+${seen}${sep}}${dirs[$i]}"
 	    ;;
 	esac
     done
 
-    eval ${v}=\"$(IFS=${sep}; echo "${in[*]}")\"
+    eval ${var}=\"$(IFS=${sep}; echo "${dirs[*]}")\"
 }
 
 std_paths ()
 {
-    typeset a="$1"
-    typeset p="$2"
-    typeset sep=:
+    typeset act="$1"
+    typeset val="$2"
+    typeset sep="${3:-:}"
     
-    typeset in
-    eval in=( $(IFS=${sep} ; set -- ${p} ; for d in "$@" ; do echo \"$d\" ; done) )
+    typeset dirs
+    eval dirs=( $(IFS=${sep} ; set -- ${val} ; for dir in "$@" ; do echo \"${dir}\" ; done) )
 
-    typeset d
-    for d in "${in[@]}" ; do
-	path_${a} PATH "${d}/bin"
-	path_${a} MANPATH "${d}/man"
+    typeset dir
+    for dir in "${dirs[@]}" ; do
+	path_${act} PATH "${dir}/bin"
+	typeset md
+	for md in man share/man ; do 
+	    if [ -x "${dir}/${md}" ] ; then
+		path_${act} MANPATH "${dir}/${md}"
+	    fi
+	done
     done
 }
 
 all_paths ()
 {
-    typeset a="$1"
-    typeset p="$2"
-    typeset sep=:
+    typeset act="$1"
+    typeset val="$2"
+    typeset sep="${3:-:}"
     
-    typeset in
-    eval in=( $(IFS=${sep} ; set -- ${p} ; for d in "$@" ; do echo \"$d\" ; done) )
+    typeset dirs
+    eval dirs=( $(IFS=${sep} ; set -- ${val} ; for dir in "$@" ; do echo \"${dir}\" ; done) )
 
-    typeset d
-    for d in "${in[@]}" ; do
-	path_${a} PATH "${d}/bin"
-	path_${a} MANPATH "${d}/man"
-	path_${a} LD_LIBRARY_PATH "${d}/man"
+    typeset dir
+    for dir in "${dirs[@]}" ; do
+	path_${act} PATH "${dir}/bin"
+	for md in man share/man ; do 
+	    if [ -x "${dir}/${md}" ] ; then
+		path_${act} MANPATH "${dir}/${md}"
+	    fi
+	done
+	path_${act} LD_LIBRARY_PATH "${dir}/lib"
     done
 }
 
