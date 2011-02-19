@@ -1,6 +1,9 @@
-bootstrap_home="${BASH_ARGV[0]%/*}"
+echo $#: "$@"
 
-FPATH="${FPATH+${FPATH}:}${bootstrap_home}"
+# BASH_ARGV is set by Bash 3+ when sourcing a script
+if [[ ${BASH_ARGV+bad} = bad ]] ; then
+    FPATH="${FPATH+${FPATH}:}${BASH_ARGV[0]%/*}"
+fi
 
 stderr ()
 {
@@ -22,7 +25,24 @@ error ()
     stderr "ERROR: $*"
 }
 
-source "${bootstrap_home}"/require.bash
+{
+    typeset dirs dir d
+    OIFS="${IFS}"
+    IFS=:
+    dirs=( ${FPATH} )
+    IFS="${OIFS}"
+
+    for d in "${dirs[@]}" ; do
+	if [[ -f "${d}"/require.bash ]] ; then
+	    dir="${d}"
+	    break
+	fi
+    done
+
+    if [[ ${dir} ]] ; then
+	source "${dir}"/require.bash
+    fi
+}
 
 # Local Variables:
 # mode: Shell-script
