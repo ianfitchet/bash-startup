@@ -577,4 +577,4 @@ pathname_flatten ()
     fi
 }
 
-provide path-functions.bash
+provide path-functions
