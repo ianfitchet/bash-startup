@@ -1,40 +1,25 @@
 
 require path-functions
 
-_uname ()
-{
-    typeset __uname
-    __uname=( $(uname -mrps) )
-
-    OS="${__uname[0]}"
-    REV="${__uname[1]}"
-
-    case "${OS}" in
-    SunOS)
-	ARCH="${__uname[3]}"
-	;;
-    Linux)
-	ARCH="${__uname[2]}"
-	;;
-    esac
-}
-
-_uname
-
-case "${OS}" in
+case "${OS_NAME}" in
 SunOS)
     std_paths append /usr
 
     typeset d
     for d in opt usr ; do
-	if [[ -d /${d}/sfw ]] ; then
-	    std_paths append /${d}/sfw
-	fi
+	std_paths -d append /${d}/sfw
     done
 
-    export OPENWINHOME=/usr/openwin
-    std_paths append ${OPENWINHOME}
-    std_paths append /usr/dt
+    case "${OS_REVISION[1]}" in
+    4|6|7|8|9|10)
+	export OPENWINHOME=/usr/openwin
+	std_paths append ${OPENWINHOME}
+	std_paths append /usr/dt
+	;;
+    *)
+	std_paths append /usr/X11R6
+	;;
+    esac
 
     std_paths append /usr/local
 
@@ -45,7 +30,6 @@ SunOS)
     ;;
 Linux)
     std_paths append /usr
-    path_append MANPATH /usr/share/man
 
     std_paths prepend /usr/local
     

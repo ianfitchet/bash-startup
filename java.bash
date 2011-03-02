@@ -1,5 +1,5 @@
 
-case "${OS}" in
+case "${OS_NAME}" in
 SunOS)
     JAVA_HOME=/usr/java
     export JAVA_HOME

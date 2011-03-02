@@ -1,5 +1,5 @@
 
-case "${OS}" in
+case "${OS_NAME}" in
 SunOS)
     # perl has good stuff in its bin directory...
     perl_root=$(perl -MConfig -e 'print $Config{prefixexp};')

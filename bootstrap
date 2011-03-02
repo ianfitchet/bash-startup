@@ -23,6 +23,22 @@ error ()
     stderr "ERROR: $*"
 }
 
+_uname ()
+{
+    typeset __uname
+    __uname=( $(uname -mrps) )
+
+    OS_NAME="${__uname[0]}"
+    OS_REV="${__uname[1]}"
+
+    typeset OIFS="${IFS}"
+    IFS=.
+    OS_REVISION=( ${OS_REV} )
+    IFS="${OIFS}"
+}
+
+_uname
+
 {
     typeset dirs dir d
     OIFS="${IFS}"

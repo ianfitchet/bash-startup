@@ -1,7 +1,7 @@
 
-case "${OS}" in
+case "${OS_NAME}" in
 SunOS)
-    std_paths append /opt/SUNWspro
+    std_paths -d append /opt/SUNWspro
     std_paths append /usr/ccs
     ;;
 esac

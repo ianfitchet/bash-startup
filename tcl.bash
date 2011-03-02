@@ -1,5 +1,5 @@
 
-case "${OS}" in
+case "${OS_NAME}" in
 SunOS)
     std_paths prepend /usr/local/tcl8.5.8
     ;;

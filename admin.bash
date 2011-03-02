@@ -1,5 +1,5 @@
 
-case "${OS}" in
+case "${OS_NAME}" in
 SunOS)
     path_append PATH /usr/sbin
     ;;
