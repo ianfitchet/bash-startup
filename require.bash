@@ -29,10 +29,14 @@ find_feature ()
 {
     typeset feature=$1
 
+    typeset OIFS="${IFS}"
+
     typeset si
 
     typeset fpath
-    eval fpath=( $(IFS=: ; set -- ${FPATH} ; for d in "$@" ; do echo \"$d\" ; done) )
+    IFS=:
+    fpath=( ${FPATH} )
+    IFS="${OIFS}"
 
     for (( si=0 ; si < ${#SUFFIXES[*]} ; si++ )) ; do
 

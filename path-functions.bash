@@ -142,7 +142,8 @@ path_modify ()
 	esac
     fi
 
-    typeset vardirs
+    typeset vardirs=()
+
     case "${act}" in
     first|start)
 	vardirs=( "${newdirs[@]}" "${origdirs[@]}" )

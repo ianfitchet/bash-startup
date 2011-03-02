@@ -14,7 +14,7 @@ _uname ()
 	ARCH="${__uname[3]}"
 	;;
     Linux)
-	ARCH="${__uname[4]}"
+	ARCH="${__uname[2]}"
 	;;
     esac
 }
