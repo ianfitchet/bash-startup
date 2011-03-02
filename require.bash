@@ -1,5 +1,5 @@
 
-# Copyright 2010 Run Scripts Limited <support@runscripts.com>
+# Copyright 2010, 2011 Run Scripts Limited <support@runscripts.com>
 
 # Based on Noah Friedman's require.bash in the Bash examples
 
@@ -40,7 +40,7 @@ find_feature ()
 
 	typeset d
 	for d in "${fpath[@]}" ; do
-	    if [ -r "$d/${feature}${suffix}" ] ; then
+	    if [[ -r "$d/${feature}${suffix}" ]] ; then
 		echo "$d/${feature}${suffix}"
 		return 0
 	    fi

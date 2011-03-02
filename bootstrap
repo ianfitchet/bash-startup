@@ -1,5 +1,5 @@
 # BASH_ARGV is set by Bash 3+ when sourcing a script
-if [[ ${BASH_ARGV+bad} = bad ]] ; then
+if [[ ${BASH_ARGV+good} = good ]] ; then
     FPATH="${FPATH+${FPATH}:}${BASH_ARGV[0]%/*}"
 fi
 

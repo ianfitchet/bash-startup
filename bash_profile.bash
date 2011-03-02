@@ -3,16 +3,18 @@ require path-functions
 
 _uname ()
 {
-    set -- $(uname -mrps)
-    OS="$1"
-    REV="$2"
+    typeset __uname
+    __uname=( $(uname -mrps) )
+
+    OS="${__uname[0]}"
+    REV="${__uname[1]}"
 
     case "${OS}" in
     SunOS)
-	ARCH="$4"
+	ARCH="${__uname[3]}"
 	;;
     Linux)
-	ARCH="$3"
+	ARCH="${__uname[4]}"
 	;;
     esac
 }
@@ -25,7 +27,7 @@ SunOS)
 
     typeset d
     for d in opt usr ; do
-	if [ -d /${d}/sfw ] ; then
+	if [[ -d /${d}/sfw ]] ; then
 	    std_paths append /${d}/sfw
 	fi
     done
@@ -36,7 +38,7 @@ SunOS)
 
     std_paths append /usr/local
 
-    if [ -d /usr/local/emacs-23.1 ] ; then
+    if [[ -d /usr/local/emacs-23.1 ]] ; then
 	std_paths append /usr/local/emacs-23.1
     fi
 

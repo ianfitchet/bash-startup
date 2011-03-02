@@ -46,7 +46,7 @@
 
 # [options]:
 
-#  -1 - do the operation once (replace/remove)
+#  -1 - do the operation once (replace/remove); unique entry (first/last/before/after)
 #  -d - apply the exists and is a directory operator
 #  -e - apply the exists operator
 #  -f - apply the exists and is a file operator
@@ -72,11 +72,21 @@ path_modify ()
 
     shift $(( $OPTIND - 1 ))
 
-    typeset var=$1
+    typeset var="$1"
     typeset val="$2"
     typeset act="$3"
     typeset wrt="$4"
     typeset sep="${5:-:}"
+
+    if [[ "${opt_once}" ]] ; then
+	case "${act}" in
+	first|start|last|end|after|before)
+	    if path_contains "${var}" "${val}" "${sep}" ; then
+		path_remove "${var}" "${val}" "${sep}"
+	    fi
+	;;
+	esac
+    fi
 
     typeset OIFS
     OIFS="${IFS}"
@@ -202,13 +212,16 @@ path_modify ()
 
 path_append ()
 {
-    typeset opt_flags
+    typeset opt_flags opt_op_flags
 
     OPTIND=1
-    while getopts "def" opt ; do
+    while getopts "1def" opt ; do
 	case "${opt}" in
-	d|e|f)
+	1)
 	    opt_flags=-${opt}
+	    ;;
+	d|e|f)
+	    opt_op_flags=-${opt}
 	    ;;
 	?)
             error "Unexpected argument"
@@ -218,7 +231,12 @@ path_append ()
 
     shift $(( $OPTIND - 1 ))
 
-    path_modify ${opt_flags} "$1" "$2" last '' "${3:-:}"
+    path_modify ${opt_flags} ${opt_op_flags} "$1" "$2" last '' "${3:-:}"
+}
+
+path_append_unique ()
+{
+    path_append -1 "$@"
 }
 
 ######################################################################
@@ -235,19 +253,23 @@ path_append ()
 
 # [options]:
 
+#  -1 - make the new entry unique
 #  -d - apply the exists and is a directory operator
 #  -e - apply the exists operator
 #  -f - apply the exists and is a file operator
 
 path_prepend ()
 {
-    typeset opt_flags
+    typeset opt_flags opt_op_flags
 
     OPTIND=1
-    while getopts "def" opt ; do
+    while getopts "1def" opt ; do
 	case "${opt}" in
-	d|e|f)
+	1)
 	    opt_flags=-${opt}
+	    ;;
+	d|e|f)
+	    opt_op_flags=-${opt}
 	    ;;
 	?)
             error "Unexpected argument"
@@ -257,7 +279,12 @@ path_prepend ()
 
     shift $(( $OPTIND - 1 ))
 
-    path_modify ${opt_flags} "$1" "$2" first '' "${3:-:}"
+    path_modify ${opt_flags} ${opt_opflags} "$1" "$2" first '' "${3:-:}"
+}
+
+path_prepend_unique ()
+{
+    path_prepend -1 "$@"
 }
 
 ######################################################################
@@ -336,6 +363,11 @@ path_replace ()
     path_modify ${opt_flags} "$1" "$3" replace "$2" "${4:-:}"
 }
 
+path_replace_first ()
+{
+    path_replace -1 "$@"
+}
+
 ######################################################################
 # 
 # path_remove [options] VAR OLD SEP
@@ -371,6 +403,38 @@ path_remove ()
     shift $(( $OPTIND - 1 ))
 
     path_modify ${opt_flags} "$1" '' remove "$2" "${3:-:}"
+}
+
+path_remove_first ()
+{
+    path_remove -1 "$@"
+}
+
+######################################################################
+# 
+# path_contains VAR VAL SEP
+#
+# Returns true if $VAR contains VAL
+
+# VAR - the name of the path to be manipulated, eg. PATH, CLASSPATH
+
+# VAL - the path element(s) to be checked for
+
+# SEP - the element separator (defaults to `:')
+
+path_contains ()
+{
+    typeset var=$1
+    typeset val=$2
+    typeset sep="${3:-:}"
+    
+    case "${sep}${!var}${sep}" in
+    *"${sep}${val}${sep}"*)
+	return 0
+	;;
+    esac
+
+    return 1
 }
 
 ######################################################################
@@ -433,8 +497,34 @@ path_trim ()
 
 # SEP - the element separator (defaults to `:')
 
+# [options]:
+
+#  -1 - make the new entry unique
+#  -d - apply the exists and is a directory operator
+#  -e - apply the exists operator
+#  -f - apply the exists and is a file operator
+
 std_paths ()
 {
+    typeset opt_flags opt_op_flags
+
+    OPTIND=1
+    while getopts "1def" opt ; do
+	case "${opt}" in
+	1)
+	    opt_flags=-${opt}
+	    ;;
+	d|e|f)
+	    opt_op_flags=-${opt}
+	    ;;
+	?)
+            error "Unexpected argument"
+            ;;
+	esac
+    done
+
+    shift $(( $OPTIND - 1 ))
+
     typeset act="$1"
     typeset val="$2"
     typeset sep="${3:-:}"
@@ -443,21 +533,26 @@ std_paths ()
     OIFS="${IFS}"
 
     IFS="${sep}"
-    typeset origdirs
-    origdirs=( ${!var} )
+    typeset newdirs
+    newdirs=( ${val} )
 
     IFS="${OIFS}"
 
     typeset dir
-    for dir in "${origdirs[@]}" ; do
-	path_${act} PATH "${dir}/bin"
+    for dir in "${newdirs[@]}" ; do
+	path_${act} ${opt_flags} ${opt_op_flags} PATH "${dir}/bin" "${sep}"
 	typeset md
 	for md in man share/man ; do 
 	    if [[ -d "${dir}/${md}" ]] ; then
-		path_${act} MANPATH "${dir}/${md}"
+		path_${act} ${opt_flags} ${opt_op_flags} MANPATH "${dir}/${md}" "${sep}"
 	    fi
 	done
     done
+}
+
+std_paths_unique ()
+{
+    std_paths -1 "$@"
 }
 
 ######################################################################
@@ -478,8 +573,34 @@ std_paths ()
 
 # SEP - the element separator (defaults to `:')
 
+# [options]:
+
+#  -1 - make the new entry unique
+#  -d - apply the exists and is a directory operator
+#  -e - apply the exists operator
+#  -f - apply the exists and is a file operator
+
 all_paths ()
 {
+    typeset opt_flags opt_op_flags
+
+    OPTIND=1
+    while getopts "1def" opt ; do
+	case "${opt}" in
+	1)
+	    opt_flags=-${opt}
+	    ;;
+	d|e|f)
+	    opt_op_flags=-${opt}
+	    ;;
+	?)
+            error "Unexpected argument"
+            ;;
+	esac
+    done
+
+    shift $(( $OPTIND - 1 ))
+
     typeset act="$1"
     typeset val="$2"
     typeset sep="${3:-:}"
@@ -488,23 +609,28 @@ all_paths ()
     OIFS="${IFS}"
 
     IFS="${sep}"
-    typeset origdirs
-    origdirs=( ${!var} )
+    typeset newdirs
+    newdirs=( ${val} )
 
     IFS="${OIFS}"
 
     typeset dir
-    for dir in "${origdirs[@]}" ; do
-	path_${act} PATH "${dir}/bin"
+    for dir in "${newdirs[@]}" ; do
+	path_${act} ${opt_flags} ${opt_op_flags} PATH "${dir}/bin" "${sep}"
 	for md in man share/man ; do 
 	    if [[ -d "${dir}/${md}" ]] ; then
-		path_${act} MANPATH "${dir}/${md}"
+		path_${act} ${opt_flags} ${opt_op_flags} MANPATH "${dir}/${md}" "${sep}"
 	    fi
 	done
 	if [[ -d "${dir}/lib" ]] ; then
-	    path_${act} LD_LIBRARY_PATH "${dir}/lib"
+	    path_${act} ${opt_flags} ${opt_op_flags} LD_LIBRARY_PATH "${dir}/lib" "${sep}"
 	fi
     done
+}
+
+all_paths_unique ()
+{
+    all_paths -1 "$@"
 }
 
 ######################################################################
@@ -526,53 +652,53 @@ pathname_flatten ()
     OIFS="${IFS}"
 
     IFS="${sep}"
-    typeset origdirs
-    origdirs=( ${val} )
+    typeset origpath
+    origpath=( ${val} )
 
     IFS="${OIFS}"
     
-    typeset newdirs
-    newdirs=()
+    typeset newpath
+    newpath=()
 
-    typeset o
-    typeset maxo=${#origdirs[*]}
+    typeset p
+    typeset maxp=${#origpath[*]}
     typeset seen=
-    for (( o=0 ; o < ${maxo} ; o++ )) ; do
-	case "${origdirs[o]}" in
+    for (( p=0 ; p < ${maxp} ; p++ )) ; do
+	case "${origpath[p]}" in
 	'')
 	    # ///foo -> ( '' '' '' foo )
 	    # but we still need the first!
-	    if [[ $o -eq 0 ]] ; then
-		newdirs=( '' )
+	    if [[ $p -eq 0 ]] ; then
+		newpath=( '' )
 	    fi
 	    ;;
 	.)
 	    ;;
 	..)
-	    if [[ $o -eq 0 ]] ; then
+	    if [[ $p -eq 0 ]] ; then
 		# .. at the start cannot be flattened
-		newdirs=( "${newdirs[@]}" "${origdirs[o]}" )
+		newpath=( "${newpath[@]}" "${origpath[p]}" )
 	    else
 	        # remove the last element
-		if [[ ${#newdirs[*]} -gt 1 ]] ; then
-		    unset newdirs[$((${#newdirs[*]} - 1))]
+		if [[ ${#newpath[*]} -gt 1 ]] ; then
+		    unset newpath[$((${#newpath[*]} - 1))]
 		fi
 	    fi
 	    ;;
 	*)
-	    newdirs=( "${newdirs[@]}" "${origdirs[o]}" )
+	    newpath=( "${newpath[@]}" "${origpath[p]}" )
 	    ;;
 	esac
     done
 
-    # If all we are left with in newdirs is '' (ie /) then the IFS
+    # If all we are left with in newpath is '' (ie /) then the IFS
     # trick fails us, we need to handle this case specially
 
-    if [[ ${#newdirs[*]} -eq 1 && "${newdirs[0]}" = "" ]] ; then
+    if [[ ${#newpath[*]} -eq 1 && "${newpath[0]}" = "" ]] ; then
 	echo /
     else
 	IFS="${sep}"
-	echo "${newdirs[*]}"
+	echo "${newpath[*]}"
 	IFS="${OIFS}"
     fi
 }
