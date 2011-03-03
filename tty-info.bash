@@ -32,7 +32,7 @@ if flag_set_p "i" ; then
 	unset _up[0]
     fi
 
-    echo "${HOST}'s ${tty} has TERM=${bold}${TERM}${offattr} ${_up[@]+_up[@] }${DISPLAY:-no X11}"
+    echo "${HOST}'s ${tty} has TERM=${bold}${TERM}${offattr} ${_up[@]+${_up[@]} }${DISPLAY:-no X11}"
 fi
 		
 provide tty-info
