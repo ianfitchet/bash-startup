@@ -7,6 +7,13 @@ Linux)
     path_append PATH /usr/sbin
     path_append PATH /sbin
     ;;
+Darwin)
+    path_append PATH /usr/sbin
+    path_append PATH /sbin
+    ;;
+CYGWIN_NT-5.1)
+    path_append PATH /usr/sbin
+    ;;
 esac
 
 provide admin
