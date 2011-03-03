@@ -1,11 +1,12 @@
 
 if flag_set_p "i" ; then
+    typeset tty=$(tty)
+    typeset HOST="${HOSTNAME%%.*}"
+
     bold=
     offattr=
 
     if type tput >/dev/null 2>&1 ; then
-	typeset tty=$(tty)
-	typeset HOST="${HOSTNAME%%.*}"
 	bold="$(tput bold)"	# enter_bold_mode
 	offattr="$(tput sgr0)"	# exit_attribute_mode
 
@@ -31,7 +32,7 @@ if flag_set_p "i" ; then
 	unset _up[0]
     fi
 
-    echo "${HOST}'s ${tty} has TERM=${bold}${TERM}${offattr} ${_up[@]} ${DISPLAY:-no X11}"
+    echo "${HOST}'s ${tty} has TERM=${bold}${TERM}${offattr} ${_up[@]+_up[@] }${DISPLAY:-no X11}"
 fi
 		
 provide tty-info
