@@ -1,5 +1,7 @@
 case "${OS_NAME}" in
 SunOS)
+    FEATURE_DESCRIPTION=
+
     typeset dists
     dists=( /usr/local/emacs-* )
     if [[ -d "${dists[0]}" ]] ; then
