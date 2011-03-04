@@ -23,9 +23,7 @@ SunOS)
 
     std_paths append /usr/local
 
-    if [[ -d /usr/local/emacs-23.1 ]] ; then
-	std_paths append /usr/local/emacs-23.1
-    fi
+    require emacs
 
     ;;
 Linux)
