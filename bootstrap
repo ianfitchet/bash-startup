@@ -58,6 +58,41 @@ _uname
     fi
 }
 
+######################################################################
+# 
+# order [options] version ...
+#
+# Return the version strings ordered (most recent first)
+
+# [options]
+
+# -t SEP - the element separator (defaults to `:')
+
+order ()
+{
+    typeset opt_sep=.
+
+    OPTIND=1
+    while getopts "t:" opt ; do
+	case "${opt}" in
+	t)
+	    opt_sep="${OPTARG}"
+	    ;;
+	?)
+            error "Unexpected argument"
+            ;;
+	esac
+    done
+
+    shift $(( $OPTIND - 1 ))
+
+    (
+	for v in "$@" ; do
+	    echo "$v"
+	done
+    ) | sort -t"${opt_sep}" -k 1nr -k 1r -k 2nr -k 2r -k 3nr -k 3r -k 4nr -k 4r
+}
+
 # Local Variables:
 # mode: Shell-script
 # buffer-file-coding-system: undecided-unix

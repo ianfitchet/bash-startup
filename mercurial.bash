@@ -1,7 +1,8 @@
-
-case "${OS_NAME}-${OS_REVISION[1]}" in
-SunOS-10)
-    std_paths -d append /usr/local/mercurial-1.7.5
+case "${OS_NAME}" in
+SunOS)
+    typeset dists=( /usr/local/mercurial-* )
+    dists=( $(order "${dists[@]##*-}") )
+    std_paths -d append /usr/local/mercurial-${dists[0]}
     ;;
 esac
 
