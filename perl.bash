@@ -1,9 +1,21 @@
 
 case "${OS_NAME}" in
 SunOS)
+    typeset dists
+    dists=( /usr/local/perl-* )
+    if [[ -d "${dists[0]}" ]] ; then
+	dists=( $(order "${dists[@]##*-}") )
+	std_paths -d prepend /usr/local/perl-${dists[0]}
+    fi
+
     # perl has good stuff in its bin directory...
-    perl_root=$(perl -MConfig -e 'print $Config{prefixexp};')
-    std_paths append $perl_root
+
+    case "$(type -p perl)" in
+    /usr/local/perl-*)
+	perl_root=$(perl -MConfig -e 'print $Config{prefixexp};')
+	std_paths append $perl_root
+	;;
+    esac
     ;;
 esac
 
