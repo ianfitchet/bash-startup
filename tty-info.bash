@@ -18,7 +18,8 @@ if flag_set_p "i" ; then
 	fi
     fi
 
-    typeset _up=()
+    typeset _up
+    _up=()
     if type uptime >/dev/null 2>&1 ; then
 	typeset _uptime
 	_uptime=$(uptime)

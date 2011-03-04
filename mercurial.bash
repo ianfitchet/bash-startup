@@ -1,8 +1,11 @@
 case "${OS_NAME}" in
 SunOS)
-    typeset dists=( /usr/local/mercurial-* )
-    dists=( $(order "${dists[@]##*-}") )
-    std_paths -d append /usr/local/mercurial-${dists[0]}
+    typeset dists
+    dists=( /usr/local/mercurial-* )
+    if [[ -d "${dists[0]}" ]] ; then
+	dists=( $(order "${dists[@]##*-}") )
+	std_paths -d prepend /usr/local/mercurial-${dists[0]}
+    fi
     ;;
 esac
 
