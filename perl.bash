@@ -12,6 +12,7 @@ SunOS)
 
     case "$(type -p perl)" in
     /usr/local/perl-*)
+	typeset perl_root
 	perl_root=$(perl -MConfig -e 'print $Config{prefixexp};')
 	std_paths append $perl_root
 	;;

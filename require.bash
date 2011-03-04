@@ -11,6 +11,8 @@ export -n SUFFIXES
     for (( bv=${BASH_VERSINFO[0]} ; bv > 1 ; bv-- )) ; do
 	SUFFIXES[${#SUFFIXES[*]}]=.bash${bv}
     done
+
+    unset bv
 }
 SUFFIXES[${#SUFFIXES[*]}]=.bash
 	

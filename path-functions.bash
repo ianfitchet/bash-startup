@@ -56,6 +56,7 @@ path_modify ()
     typeset opt_op opt_once
 
     OPTIND=1
+    typeset opt
     while getopts "1def" opt ; do
 	case "${opt}" in
 	1)
@@ -217,6 +218,7 @@ path_append ()
     typeset opt_flags opt_op_flags
 
     OPTIND=1
+    typeset opt
     while getopts "1def" opt ; do
 	case "${opt}" in
 	1)
@@ -265,6 +267,7 @@ path_prepend ()
     typeset opt_flags opt_op_flags
 
     OPTIND=1
+    typeset opt
     while getopts "1def" opt ; do
 	case "${opt}" in
 	1)
@@ -310,6 +313,7 @@ path_verify ()
     typeset opt_flags
 
     OPTIND=1
+    typeset opt
     while getopts "def" opt ; do
 	case "${opt}" in
 	d|e|f)
@@ -349,6 +353,7 @@ path_replace ()
     typeset opt_flags
 
     OPTIND=1
+    typeset opt
     while getopts "1" opt ; do
 	case "${opt}" in
 	1)
@@ -391,6 +396,7 @@ path_remove ()
     typeset opt_flags
 
     OPTIND=1
+    typeset opt
     while getopts "1" opt ; do
 	case "${opt}" in
 	1)
@@ -511,6 +517,7 @@ std_paths ()
     typeset opt_flags opt_op_flags
 
     OPTIND=1
+    typeset opt
     while getopts "1def" opt ; do
 	case "${opt}" in
 	1)
@@ -587,6 +594,7 @@ all_paths ()
     typeset opt_flags opt_op_flags
 
     OPTIND=1
+    typeset opt
     while getopts "1def" opt ; do
 	case "${opt}" in
 	1)
