@@ -1,7 +1,17 @@
 
 case "${OS_NAME}" in
 SunOS)
-    std_paths -d append /usr/local/tcl8.5.8
+    typeset dists
+    dists=( /usr/local/tcl* )
+    if [[ -d "${dists[0]}" ]] ; then
+	dists=( $(order "${dists[@]##*-}") )
+	std_paths -d append /usr/local/tcl${dists[0]}
+
+	FEATURE_DESCRIPTION="use TCL from /usr/local/tcl${dists[0]}"
+    fi
+    ;;
+*)
+    FEATURE_DESCRIPTION="(Solaris)"
     ;;
 esac
 

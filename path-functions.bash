@@ -713,4 +713,6 @@ pathname_flatten ()
     fi
 }
 
+FEATURE_DESCRIPTION="functions to manipulate PATHs"
+
 provide path-functions

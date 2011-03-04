@@ -5,7 +5,12 @@ SunOS)
     if [[ -d "${dists[0]}" ]] ; then
 	dists=( $(order "${dists[@]##*-}") )
 	std_paths -d prepend /usr/local/emacs-${dists[0]}
+
+	FEATURE_DESCRIPTION="use emacs from /usr/local/emacs-${dists[0]}"
     fi
+    ;;
+*)
+    FEATURE_DESCRIPTION="(Solaris)"
     ;;
 esac
 

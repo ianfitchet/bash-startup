@@ -6,15 +6,45 @@ if flag_set_p "i" ; then
     bold=
     offattr=
 
+    tty_effect ()
+    {
+	typeset effect="tty_effect_$1"
+	shift
+
+	echo "${!effect}$@${tty_effect_offattr}"
+    }
+    
     if type tput >/dev/null 2>&1 ; then
-	bold="$(tput bold)"	# enter_bold_mode
-	offattr="$(tput sgr0)"	# exit_attribute_mode
+	typeset effect effects
+	effects=( blink bold dim sitm rev invis smso ssubm ssupm smul )
+
+	typeset ei maxei
+	maxei=${#effects[*]}
+
+	for ((ei=0; ei < maxei; ei++)) ; do
+	    typeset e
+	    if e="$(tput ${effects[ei]})" ; then
+		read tty_effect_${effects[ei]} <<< "$e"
+	    else
+		unset effects[ei]
+	    fi
+	done
 
 	# if we can't turn things off then make sure we don't turn
 	# anything on in the first instance
-	if [[ $? -ne 0 ]] ; then
-	    bold=
-	    offattr=
+	if ! tty_effect_offattr="$(tput sgr0)" ; then
+	    for effect in "${effects[@]}" ; do
+		unset tty_effect_${effect}
+	    done
+	    unset tty_effect_offattr
+	else
+	    typeset fd
+	    fd=
+
+	    for effect in "${effects[@]}" ; do
+		fd="${fd:+${fd}/}$(tty_effect ${effect} ${effect})"
+	    done
+	    FEATURE_DESCRIPTION="tty attributes: ${fd}"
 	fi
     fi
 
@@ -33,9 +63,11 @@ if flag_set_p "i" ; then
 	unset _up[0]
     fi
 
-    echo "${HOST}'s ${tty} has TERM=${bold}${TERM}${offattr} ${_up[@]+${_up[@]} }${DISPLAY:-no X11}"
+    echo "${HOST}'s ${tty} has TERM=${bold}${TERM}${tty_effect_offattr} ${_up[@]+${_up[@]} }${DISPLAY:-no X11}"
+else
+    FEATURE_DESCRIPTION="(interactive only)"
 fi
-		
+
 provide tty-info
 
 # Local Variables:

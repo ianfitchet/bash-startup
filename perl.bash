@@ -6,6 +6,8 @@ SunOS)
     if [[ -d "${dists[0]}" ]] ; then
 	dists=( $(order "${dists[@]##*-}") )
 	std_paths -d prepend /usr/local/perl-${dists[0]}
+
+	FEATURE_DESCRIPTION="use perl from /usr/local/perl-${dists[0]}"
     fi
 
     # perl has good stuff in its bin directory...
@@ -15,8 +17,13 @@ SunOS)
 	typeset perl_root
 	perl_root=$(perl -MConfig -e 'print $Config{prefixexp};')
 	std_paths append $perl_root
+	
+	FEATURE_DESCRIPTION="${FEATURE_DESCRIPTION+${FEATURE_DESCRIPTION}; }add Perl's bin directory to the PATH"
 	;;
     esac
+    ;;
+*)
+    FEATURE_DESCRIPTION="(Solaris)"
     ;;
 esac
 

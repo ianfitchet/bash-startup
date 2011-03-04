@@ -5,7 +5,12 @@ SunOS)
     if [[ -d "${dists[0]}" ]] ; then
 	dists=( $(order "${dists[@]##*-}") )
 	std_paths -d prepend /usr/local/mercurial-${dists[0]}
+
+	FEATURE_DESCRIPTION="use hg from /usr/local/mercurial-${dists[0]}"
     fi
+    ;;
+*)
+    FEATURE_DESCRIPTION="(Solaris)"
     ;;
 esac
 

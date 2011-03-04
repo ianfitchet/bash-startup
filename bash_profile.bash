@@ -35,4 +35,6 @@ Linux)
     ;;
 esac
 
+FEATURE_DESCRIPTION="standard features/PATHs for login shells"
+
 provide bash_profile

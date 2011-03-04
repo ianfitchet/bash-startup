@@ -13,6 +13,8 @@ flag_set_p ()
     esac
 }
 
+FEATURE_DESCRIPTION="standard features/PATHs for interactive shells"
+
 provide bashrc
 
 # Local Variables:

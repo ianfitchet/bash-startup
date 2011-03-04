@@ -16,6 +16,8 @@ CYGWIN_NT-5.1)
     ;;
 esac
 
+FEATURE_DESCRIPTION="add admin commands to the PATH"
+
 provide admin
 
 # Local Variables:
