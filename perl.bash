@@ -7,8 +7,8 @@ SunOS)
 	dists=( $(order "${dists[@]##*-}") )
 	std_paths -d prepend /usr/local/perl-${dists[0]}
 
-	FEATURE_DESCRIPTION="use perl from /usr/local/perl-${dists[0]}"
-	FEATURE_VERSION="${dists[0]}"
+	feature_description="use perl from /usr/local/perl-${dists[0]}"
+	feature_version="${dists[0]}"
     fi
 
     # perl has good stuff in its bin directory which Sun don't copy to /usr/bin...
@@ -19,12 +19,12 @@ SunOS)
 	perl_root=$(perl -MConfig -e 'print $Config{prefixexp};')
 	std_paths append $perl_root
 	
-	FEATURE_DESCRIPTION="${FEATURE_DESCRIPTION:+${FEATURE_DESCRIPTION}; }add Perl's bin directory to the PATH"
+	feature_description="${feature_description:+${feature_description}; }add Perl's bin directory to the PATH"
 	;;
     esac
     ;;
 *)
-    FEATURE_DESCRIPTION="(Solaris)"
+    feature_description="(Solaris)"
     ;;
 esac
 
@@ -36,11 +36,12 @@ if type -p perl >/dev/null 2>&1 ; then
 	
 	v="${v##*perl, v}"
 	v="${v%% *}"
-	FEATURE_VERSION="${v}"
+	feature_version="${v}"
     } < <(perl -v)
 fi
 
-provide perl
+provide perl "${feature_description}" "${feature_version}"
+unset feature_description feature_version
 
 # Local Variables:
 # mode: Shell-script

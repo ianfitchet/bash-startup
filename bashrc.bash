@@ -13,9 +13,7 @@ flag_set_p ()
     esac
 }
 
-FEATURE_DESCRIPTION="standard features/PATHs for interactive shells"
-
-provide bashrc
+provide bashrc "standard features/PATHs for interactive shells"
 
 # Local Variables:
 # mode: Shell-script

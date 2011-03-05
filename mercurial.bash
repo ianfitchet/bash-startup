@@ -6,12 +6,12 @@ SunOS)
 	dists=( $(order "${dists[@]##*-}") )
 	std_paths -d prepend /usr/local/mercurial-${dists[0]}
 
-	FEATURE_DESCRIPTION="use hg from /usr/local/mercurial-${dists[0]}"
-	FEATURE_VERSION="${dists[0]}"
+	feature_description="use hg from /usr/local/mercurial-${dists[0]}"
+	feature_version="${dists[0]}"
     fi
     ;;
 *)
-    FEATURE_DESCRIPTION="(Solaris)"
+    feature_description="(Solaris)"
     ;;
 esac
 
@@ -20,10 +20,11 @@ if type -p hg >/dev/null 2>&1 ; then
     read v <<< $(hg --version)
     v="${v##*version }"
     v="${v%%)*}"
-    FEATURE_VERSION="${v}"
+    feature_version="${v}"
 fi
 
-provide mercurial
+provide mercurial "${feature_description}" "${feature_version}"
+unset feature_description feature_version
 
 # Local Variables:
 # mode: Shell-script

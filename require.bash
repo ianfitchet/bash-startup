@@ -132,9 +132,6 @@ require ()
 {
     typeset feature status=0
 
-    FEATURE_DESCRIPTION='n/k'
-    FEATURE_VERSION=
-
     local FPATH="${FPATH}"
 
     OPTIND=1
@@ -183,14 +180,20 @@ require ()
 
 provide ()
 {
-    typeset fn
-    fn=FEATURE_INDEX_${1//[^a-zA-Z0-9]/_}
+    typeset fn="$1"
+    typeset fd="${2:-n/a}"
+    typeset fv="${3}"
+
+    typeset fin
+    fin=FEATURE_INDEX_${1//[^a-zA-Z0-9]/_}
     typeset fi
-    fi=${!fn:-0}
+    fi=${!fin:-0}
 
     FEATURE_NAMES[fi]="$1"
-    FEATURE_DESC[fi]="${FEATURE_DESCRIPTION}"
-    FEATURE_VERSION[fi]="${FEATURE_VERSION}"
+    FEATURE_DESC[fi]="${fd}"
+    FEATURE_VERSION[fi]="${fv}"
+
+    unset ${fin}
 }
 
 if [[ "${BASH_VERSINFO[0]}" -ge 3 || ("${BASH_VERSINFO[0]}" -eq 2 && "${BASH_VERSINFO[1]%[a-z]}" -ge 4) ]] ; then

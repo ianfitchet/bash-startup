@@ -44,7 +44,7 @@ if flag_set_p "i" ; then
 	    for effect in "${effects[@]}" ; do
 		fd="${fd:+${fd}/}$(tty_effect ${effect} ${effect})"
 	    done
-	    FEATURE_DESCRIPTION="tty attributes: ${fd}"
+	    feature_description="tty attributes: ${fd}"
 	fi
     fi
 
@@ -65,10 +65,11 @@ if flag_set_p "i" ; then
 
     echo "${HOST}'s ${tty} has TERM=${bold}${TERM}${tty_effect_offattr} ${_up[@]+${_up[@]} }${DISPLAY:-no X11}"
 else
-    FEATURE_DESCRIPTION="(interactive only)"
+    feature_description="(interactive only)"
 fi
 
-provide tty-info
+provide tty-info "${feature_description}"
+unset feature_description
 
 # Local Variables:
 # mode: Shell-script

@@ -7,16 +7,17 @@ SunOS)
 	dists=( $(order "${dists[@]##*tcl}") )
 	std_paths -d append /usr/local/tcl${dists[0]}
 
-	FEATURE_DESCRIPTION="use TCL from /usr/local/tcl${dists[0]}"
-	FEATURE_VERSION="${dists[0]}"
+	feature_description="use TCL from /usr/local/tcl${dists[0]}"
+	feature_version="${dists[0]}"
     fi
     ;;
 *)
-    FEATURE_DESCRIPTION="(Solaris)"
+    feature_description="(Solaris)"
     ;;
 esac
 
-provide tcl
+provide tcl "${feature_description}" "${feature_version}"
+unset feature_description feature_version
 
 # Local Variables:
 # mode: Shell-script
