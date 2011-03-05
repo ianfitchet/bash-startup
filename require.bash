@@ -137,6 +137,7 @@ require ()
 
     local FPATH="${FPATH}"
 
+    OPTIND=1
     typeset opt
     while getopts "d:" opt ; do
 	case "${opt}" in
