@@ -1,8 +1,6 @@
 
 case "${OS_NAME}" in
 SunOS)
-    FEATURE_DESCRIPTION=
-
     typeset dists
     dists=( /usr/local/perl-* )
     if [[ -d "${dists[0]}" ]] ; then
@@ -10,6 +8,7 @@ SunOS)
 	std_paths -d prepend /usr/local/perl-${dists[0]}
 
 	FEATURE_DESCRIPTION="use perl from /usr/local/perl-${dists[0]}"
+	FEATURE_VERSION="${dists[0]}"
     fi
 
     # perl has good stuff in its bin directory which Sun don't copy to /usr/bin...
@@ -23,6 +22,18 @@ SunOS)
 	FEATURE_DESCRIPTION="${FEATURE_DESCRIPTION:+${FEATURE_DESCRIPTION}; }add Perl's bin directory to the PATH"
 	;;
     esac
+
+    if type -p perl >/dev/null 2>&1 ; then
+	{
+	    typeset l v
+	    read l
+	    read v
+	    
+	    v="${v##*perl, v}"
+	    v="${v%% *}"
+	    FEATURE_VERSION="${v}"
+	} < <(perl -v)
+    fi
     ;;
 *)
     FEATURE_DESCRIPTION="(Solaris)"

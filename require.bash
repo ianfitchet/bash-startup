@@ -3,7 +3,7 @@
 
 # Based on Noah Friedman's require.bash in the Bash examples
 
-export -n FEATURE_NAMES FEATURE_DESC FEATURE_INDEX
+export -n FEATURE_NAMES FEATURE_DESC FEATURE_INDEX FEATURE_VERSION
 FEATURE_INDEX=${FEATURE_INDEX:=0}
 export -n FEATURE_SUFFIXES
 {
@@ -23,9 +23,15 @@ featurep ()
 	return 0
 	;;
     esac
-       
+
     return 1
 }
+
+# We can be here if both .bash_profile and .bashrc source this file
+# and .bash_profile sources .bashrc.  We don't need to do this twice!
+if featurep require ; then
+    return 0
+fi
 
 features ()
 {
@@ -34,9 +40,9 @@ features ()
 
     OPTIND=1
     typeset opt
-    while getopts "sl" opt ; do
+    while getopts "lsv" opt ; do
 	case "${opt}" in
-	s|l)
+	s|l|v)
 	    opt_kind=${opt}
 	    ;;
 	?)
@@ -50,6 +56,26 @@ features ()
     case "${opt_kind}" in
     s)
 	echo "${FEATURE_NAMES[*]}"
+	;;
+    v)
+	typeset fi maxfi first
+	first=1
+
+	maxfi=${#FEATURE_NAMES[*]}
+
+	for ((fi=0; fi < maxfi; fi++)) ; do
+	    if [[ "${first}" ]] ; then
+		first=
+	    else
+		echo -n ", "
+	    fi
+
+	    echo -n "${FEATURE_NAMES[fi]}"
+	    if [[ "${FEATURE_VERSION[fi]}" ]] ; then
+		echo -n " ${FEATURE_VERSION[fi]}"
+	    fi
+	done
+	echo
 	;;
     l)
 	typeset fi maxfi
@@ -67,7 +93,7 @@ features ()
 	done
 
 	for ((fi=0; fi < maxfi; fi++)) ; do
-	    printf "%-*s - %s\n" $maxlf "${FEATURE_NAMES[fi]}" "${FEATURE_DESC[fi]}"
+	    printf "%-*s %-7s - %s\n" $maxlf "${FEATURE_NAMES[fi]}" "${FEATURE_VERSION[fi]}" "${FEATURE_DESC[fi]}"
 	done
 	;;
     esac
@@ -106,6 +132,9 @@ require ()
 {
     typeset feature status=0
 
+    FEATURE_DESCRIPTION='n/k'
+    FEATURE_VERSION=
+
     local FPATH="${FPATH}"
 
     typeset opt
@@ -128,6 +157,13 @@ require ()
 	    typeset feature_file
 
 	    if feature_file=$(find_feature ${feature}) ; then
+		typeset fi
+
+		# a feature can require another before it has called
+		# provide itself whereon it will lose its index
+		read FEATURE_INDEX_${feature//[^a-zA-Z0-9]/_} <<< ${FEATURE_INDEX}
+		FEATURE_INDEX=$(( FEATURE_INDEX + 1 ))
+
 		source "${feature_file}"
 
 		if ! featurep ${feature} ; then
@@ -146,10 +182,14 @@ require ()
 
 provide ()
 {
-    FEATURE_NAMES[FEATURE_INDEX]="$1"
-    FEATURE_DESC[FEATURE_INDEX]="${FEATURE_DESCRIPTION}"
+    typeset fn
+    fn=FEATURE_INDEX_${1//[^a-zA-Z0-9]/_}
+    typeset fi
+    fi=${!fn:-0}
 
-    FEATURE_INDEX=$(( FEATURE_INDEX + 1 ))
+    FEATURE_NAMES[fi]="$1"
+    FEATURE_DESC[fi]="${FEATURE_DESCRIPTION}"
+    FEATURE_VERSION[fi]="${FEATURE_VERSION}"
 }
 
 if [[ "${BASH_VERSINFO[0]}" -ge 3 || ("${BASH_VERSINFO[0]}" -eq 2 && "${BASH_VERSINFO[1]%[a-z]}" -ge 4) ]] ; then
@@ -205,10 +245,6 @@ if [[ "${BASH_VERSINFO[0]}" -ge 3 || ("${BASH_VERSINFO[0]}" -eq 2 && "${BASH_VER
     complete -F feature_require_completion require
 
 fi
-
-FEATURE_DESCRIPTION="require/provide functionality"
-
-provide require
 
 # Local Variables:
 # mode: Shell-script
