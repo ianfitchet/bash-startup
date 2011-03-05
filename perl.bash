@@ -22,23 +22,23 @@ SunOS)
 	FEATURE_DESCRIPTION="${FEATURE_DESCRIPTION:+${FEATURE_DESCRIPTION}; }add Perl's bin directory to the PATH"
 	;;
     esac
-
-    if type -p perl >/dev/null 2>&1 ; then
-	{
-	    typeset l v
-	    read l
-	    read v
-	    
-	    v="${v##*perl, v}"
-	    v="${v%% *}"
-	    FEATURE_VERSION="${v}"
-	} < <(perl -v)
-    fi
     ;;
 *)
     FEATURE_DESCRIPTION="(Solaris)"
     ;;
 esac
+
+if type -p perl >/dev/null 2>&1 ; then
+    {
+	typeset l v
+	read l
+	read v
+	
+	v="${v##*perl, v}"
+	v="${v%% *}"
+	FEATURE_VERSION="${v}"
+    } < <(perl -v)
+fi
 
 provide perl
 

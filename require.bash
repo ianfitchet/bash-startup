@@ -217,10 +217,12 @@ if [[ "${BASH_VERSINFO[0]}" -ge 3 || ("${BASH_VERSINFO[0]}" -eq 2 && "${BASH_VER
 	    typeset s
 	    for s in "${FEATURE_SUFFIXES[@]}" ; do
 		typeset glob
-		glob=( "${word}"*${s} )
+		glob=( "${fd}"/"${word}"*${s} )
 
 		if [[ -e "${glob[0]}" ]] ; then
-		    poss_features=( "${poss_features[@]}" "${glob[@]%.bash*}" )
+		    glob=( "${glob[@]#${fd}/}" )
+		    glob=( "${glob[@]%.bash*}" )
+		    poss_features=( "${poss_features[@]}" "${glob[@]}" )
 		fi
 	    done
 
