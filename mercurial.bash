@@ -1,14 +1,22 @@
 case "${OS_NAME}" in
 SunOS)
-    typeset dists
-    dists=( /usr/local/mercurial-* )
-    if [[ -d "${dists[0]}" ]] ; then
-	dists=( $(order "${dists[@]##*-}") )
-	std_paths -d prepend /usr/local/mercurial-${dists[0]}
+    typeset dists prefix
 
-	feature_description="use hg from /usr/local/mercurial-${dists[0]}"
-	feature_version="${dists[0]}"
-    fi
+    prefix=/usr/local/mercurial-
+
+    dists=( ${prefix}* )
+    dists=( $(order "${dists[@]##*-}") )
+
+    typeset i
+    for ((i=0; i < ${#dists[*]}; i++)) ; do
+	if [[ -d "${prefix}${dists[i]}" ]] ; then
+	    std_paths -d prepend ${prefix}${dists[i]}
+
+	    feature_description="use hg from ${prefix}${dists[i]}"
+	    feature_version="${dists[i]}"
+	    break
+	fi
+    done
     ;;
 *)
     feature_description="(Solaris)"
