@@ -1,5 +1,6 @@
 case "${OS_NAME}" in
 SunOS)
+    
     emacs_setup ()
     {
 	typeset dist="$1"

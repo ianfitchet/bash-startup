@@ -1,5 +1,6 @@
 case "${OS_NAME}" in
 SunOS)
+
     mercurial_setup ()
     {
 	typeset dist="$1"

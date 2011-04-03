@@ -1,11 +1,12 @@
 
 case "${OS_NAME}" in
 SunOS)
+    
     tcl_setup ()
     {
 	typeset dist="$1"
 
-	std_paths -d append ${prefix}${dist}
+	std_paths -d prepend ${prefix}${dist}
 
 	feature_description="use TCL from ${prefix}${dist}"
 	feature_version="${dist}"

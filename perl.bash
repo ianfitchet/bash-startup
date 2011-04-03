@@ -1,6 +1,7 @@
 
 case "${OS_NAME}" in
 SunOS)
+
     perl_setup ()
     {
 	typeset dist="$1"

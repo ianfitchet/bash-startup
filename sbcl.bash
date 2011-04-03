@@ -1,10 +1,11 @@
 case "${OS_NAME}" in
 SunOS)
+
     sbcl_setup ()
     {
 	typeset dist="$1"
 
-    	std_paths -d append ${prefix}${dist}
+    	std_paths -d prepend ${prefix}${dist}
 	export SBCL_HOME=${prefix}${dist}/lib/sbcl
 
 	feature_description="use SBCL from ${prefix}${dist}"
