@@ -1,23 +1,17 @@
 case "${OS_NAME}" in
 SunOS)
-    typeset dists prefix
+    sbcl_setup ()
+    {
+	typeset dist="$1"
 
-    prefix=/usr/local/sbcl-
+    	std_paths -d append ${prefix}${dist}
+	export SBCL_HOME=${prefix}${dist}/lib/sbcl
 
-    dists=( ${prefix}* )
-    dists=( $(order "${dists[@]##*-}") )
+	feature_description="use SBCL from ${prefix}${dist}"
+	feature_version="${dist}"
+    }
 
-    typeset i
-    for ((i=0; i < ${#dists[*]}; i++)) ; do
-	if [[ -d "${prefix}${dists[i]}" ]] ; then
-	    std_paths -d append ${prefix}${dists[i]}
-	    export SBCL_HOME=${prefix}${dists[i]}/lib/sbcl
-
-	    feature_description="use SBCL from ${prefix}${dists[i]}"
-	    feature_version="${dists[i]}"
-	    break
-	fi
-    done
+    newest_release /usr/local/sbcl- sbcl_setup
     ;;
 *)
     feature_description="(Solaris)"

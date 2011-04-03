@@ -1,23 +1,17 @@
 
 case "${OS_NAME}" in
 SunOS)
-    typeset dists prefix
+    perl_setup ()
+    {
+	typeset dist="$1"
 
-    prefix=/usr/local/perl-
+	std_paths -d prepend ${prefix}${dist}
 
-    dists=( ${prefix}* )
-    dists=( $(order "${dists[@]##*-}") )
-
-    typeset i
-    for ((i=0; i < ${#dists[*]}; i++)) ; do
-	if [[ -d "${prefix}${dists[i]}" ]] ; then
-	    std_paths -d prepend ${prefix}${dists[i]}
-
-	    feature_description="use perl from ${prefix}${dists[i]}"
-	    feature_version="${dists[i]}"
-	    break
-	fi
-    done
+	feature_description="use perl from ${prefix}${dist}"
+	feature_version="${dist}"
+    }
+    
+    newest_release /usr/local/perl- perl_setup
 
     # perl has good stuff in its bin directory which Sun don't copy to /usr/bin...
 

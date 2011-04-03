@@ -95,6 +95,25 @@ order ()
     ) | sort -t"${opt_sep}" -k 1nr -k 1r -k 2nr -k 2r -k 3nr -k 3r -k 4nr -k 4r
 }
 
+newest_release ()
+{
+    typeset prefix="$1"
+    typeset callback="$2"
+
+    typeset dists
+
+    dists=( ${prefix}* )
+    dists=( $(order "${dists[@]##*-}") )
+
+    typeset i
+    for ((i=0; i < ${#dists[*]}; i++)) ; do
+    	if [[ -d "${prefix}${dists[i]}" ]] ; then
+	    $callback "${dists[i]}"
+    	    break
+    	fi
+    done
+}
+
 # Local Variables:
 # mode: Shell-script
 # buffer-file-coding-system: undecided-unix

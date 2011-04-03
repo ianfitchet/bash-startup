@@ -3,12 +3,11 @@ require path-functions
 
 case "${OS_NAME}" in
 SunOS)
-    std_paths append /usr
+    std_paths append /usr/local
 
-    typeset d
-    for d in opt usr ; do
-	std_paths -d append /${d}/sfw
-    done
+    require emacs
+
+    std_paths append /usr
 
     case "${OS_REVISION[1]}" in
     4|6|7|8|9|10)
@@ -21,10 +20,11 @@ SunOS)
 	;;
     esac
 
-    std_paths append /usr/local
-
-    require emacs
-
+    # b134: /opt/sfw doesn't exist; /usr/sfw only has cpp and ipmitool over /usr/bin
+    typeset d
+    for d in opt usr ; do
+	std_paths -d append /${d}/sfw
+    done
     ;;
 Linux)
     std_paths append /usr

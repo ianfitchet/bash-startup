@@ -1,24 +1,17 @@
 
 case "${OS_NAME}" in
 SunOS)
-    typeset dists prefix
+    tcl_setup ()
+    {
+	typeset dist="$1"
 
-    prefix=/usr/local/tcl
+	std_paths -d append ${prefix}${dist}
 
-
-    dists=( ${prefix}* )
-    dists=( $(order "${dists[@]##*tcl}") )
-
-    typeset i
-    for ((i=0; i < ${#dists[*]}; i++)) ; do
-	if [[ -d "${prefix}${dists[i]}" ]] ; then
-	    std_paths -d append ${prefix}${dists[i]}
-
-	    feature_description="use TCL from ${prefix}${dists[i]}"
-	    feature_version="${dists[i]}"
-	    break
-	fi
-    done
+	feature_description="use TCL from ${prefix}${dist}"
+	feature_version="${dist}"
+    }
+    
+    newest_release /usr/local/tcl tcl_setup
     ;;
 *)
     feature_description="(Solaris)"
