@@ -103,7 +103,7 @@ newest_release ()
     typeset dists
 
     dists=( ${prefix}* )
-    dists=( $(order "${dists[@]##*-}") )
+    dists=( $(order "${dists[@]#${prefix}}") )
 
     typeset i
     for ((i=0; i < ${#dists[*]}; i++)) ; do
