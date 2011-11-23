@@ -18,6 +18,9 @@
 # path-functions.bash -- a set of shell functions for manipulating
 # paths of various kinds
 #
+# For a detailed explanation see:
+# http://www.runscripts.com/support/guides/scripting/bash/path-functions
+#
 # These should be portable across Bash 2, 3, 4
 
 ######################################################################
@@ -209,6 +212,7 @@ path_modify ()
 
 # [options]:
 
+#  -1 - make the new entry unique
 #  -d - apply the exists and is a directory operator
 #  -e - apply the exists operator
 #  -f - apply the exists and is a file operator
