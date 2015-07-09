@@ -12,6 +12,47 @@ if flag_set_p "i" ; then
     }
     
     if type tput >/dev/null 2>&1 ; then
+	typeset colour colours
+	colours=( black red green yellow blue magenta cyan white )
+
+	typeset cattr cattrs
+	cattrs=( setaf setab )
+
+	typeset ci maxci
+	maxci=${#cattrs[*]}
+
+	for ((ci=0; ci < maxci; ci++)) ; do
+	    typeset e effectname
+	    capname="${cattrs[ci]}"
+
+	    # FreeBSD's terminfo(1) manpage knows about the "modern"
+	    # capnames but uses the older Tcapnames.
+	    case "${OS_NAME}" in
+		FreeBSD)
+		    case "${capname}" in
+			setaf) capname=AF ;;
+			setab) capname=AB ;;
+		    esac
+		    ;;
+	    esac
+
+	    typeset colouri
+	    for ((colouri=0; colouri < ${#colours[*]}; colouri++)) ; do
+		colour=${colours[colouri]}
+		if e="$(tput ${capname} ${colouri})" ; then
+
+		    case "${cattrs[ci]}" in
+		    setaf) effectname=${colour} ;;
+		    setab) effectname=bg_${colour} ;;
+		    esac
+
+		    read tty_effect_${effectname} <<< "$e"
+		else
+		    unset cattrs[ci]
+		fi
+	    done
+	done
+
 	typeset effect effects
 	effects=( blink bold dim sitm rev invis smso ssubm ssupm smul )
 
@@ -67,7 +108,13 @@ if flag_set_p "i" ; then
 	    for effect in "${effects[@]}" ; do
 		fd="${fd:+${fd}/}$(tty_effect ${effect} ${effect})"
 	    done
-	    feature_description="tty attributes: ${fd}"
+
+	    typeset cfd
+	    cfd=
+	    for colour in "${colours[@]}" ; do
+		cfd="${cfd:+${cfd}/}$(tty_effect ${colour} ${colour})"
+	    done
+	    feature_description="tty attributes: ${fd} ${cfd}"
 	fi
     fi
 
@@ -86,7 +133,7 @@ if flag_set_p "i" ; then
 	unset _up[0]
     fi
 
-    echo "${HOST}'s ${tty} has TERM=$(tty_effect bold ${TERM}) ${_up[@]+${_up[@]} }${DISPLAY:-$(tty_effect bold no X11)}"
+    echo "${HOST}'s ${tty} has TERM=$(tty_effect bold ${TERM}) ${_up[@]+${_up[@]} }${DISPLAY:-$(tty_effect red $(tty_effect bold no X11))}"
 else
     feature_description="(interactive only)"
 fi
