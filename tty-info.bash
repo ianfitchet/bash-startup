@@ -3,9 +3,6 @@ if flag_set_p "i" ; then
     typeset tty=$(tty)
     typeset HOST="${HOSTNAME%%.*}"
 
-    bold=
-    offattr=
-
     tty_effect ()
     {
 	typeset effect="tty_effect_$1"
@@ -89,7 +86,7 @@ if flag_set_p "i" ; then
 	unset _up[0]
     fi
 
-    echo "${HOST}'s ${tty} has TERM=${bold}${TERM}${tty_effect_offattr} ${_up[@]+${_up[@]} }${DISPLAY:-no X11}"
+    echo "${HOST}'s ${tty} has TERM=$(tty_effect bold ${TERM}) ${_up[@]+${_up[@]} }${DISPLAY:-$(tty_effect bold no X11)}"
 else
     feature_description="(interactive only)"
 fi
