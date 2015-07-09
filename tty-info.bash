@@ -23,7 +23,27 @@ if flag_set_p "i" ; then
 
 	for ((ei=0; ei < maxei; ei++)) ; do
 	    typeset e
-	    if e="$(tput ${effects[ei]})" ; then
+	    capname="${effects[ei]}"
+
+	    # FreeBSD's terminfo(1) manpage knows about the "modern"
+	    # capnames but uses the older Tcapnames.
+	    case "${OS_NAME}" in
+		FreeBSD)
+		    case "${capname}" in
+			blink) capname=mb ;;
+			bold)  capname=md ;;
+			dim)   capname=mh ;;
+			sitm)  capname=ZH ;;
+			rev)   capname=mr ;;
+			invis) capname=mk ;;
+			smso)  capname=so ;;
+			ssubm) capname=ZN ;;
+			ssupm) capname=ZO ;;
+			smul)  capname=us ;;
+		    esac
+		    ;;
+	    esac
+	    if e="$(tput ${capname})" ; then
 		read tty_effect_${effects[ei]} <<< "$e"
 	    else
 		unset effects[ei]
@@ -32,7 +52,13 @@ if flag_set_p "i" ; then
 
 	# if we can't turn things off then make sure we don't turn
 	# anything on in the first instance
-	if ! tty_effect_offattr="$(tput sgr0)" ; then
+	capname=sgr0
+	case "${OS_NAME}" in
+	    FreeBSD)
+		capname=me
+		;;
+	esac
+	if ! tty_effect_offattr="$(tput ${capname})" ; then
 	    for effect in "${effects[@]}" ; do
 		unset tty_effect_${effect}
 	    done
