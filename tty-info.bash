@@ -133,7 +133,13 @@ if flag_set_p "i" ; then
 	unset _up[0]
     fi
 
-    echo "${HOST}'s ${tty} has TERM=$(tty_effect bold ${TERM}) ${_up[@]+${_up[@]} }${DISPLAY:-$(tty_effect red $(tty_effect bold no X11))}"
+    typeset display
+    if [[ $DISPLAY ]] ; then
+	display="$(tty_effect bg_magenta $(tty_effect white ${DISPLAY}))"
+    else
+	display="$(tty_effect red $(tty_effect bold no X11))"
+    fi
+    echo "${HOST}'s ${tty} has TERM=$(tty_effect bold ${TERM}) ${_up[@]+${_up[@]} }${display}"
 else
     feature_description="(interactive only)"
 fi
