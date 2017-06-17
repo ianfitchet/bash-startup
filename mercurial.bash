@@ -1,5 +1,5 @@
 case "${OS_NAME}" in
-SunOS)
+SunOS|Linux)
 
     mercurial_setup ()
     {
@@ -14,7 +14,7 @@ SunOS)
     newest_release /usr/local/mercurial- mercurial_setup
     ;;
 *)
-    feature_description="(Solaris)"
+    feature_description="(Solaris|Linux)"
     ;;
 esac
 
