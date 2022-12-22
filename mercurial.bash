@@ -14,13 +14,14 @@ SunOS|Linux)
     newest_release /usr/local/mercurial- mercurial_setup
     ;;
 *)
-    feature_description="(Solaris|Linux)"
+    feature_description="n/a"
     ;;
 esac
 
 if type -p hg >/dev/null 2>&1 ; then
     typeset v
     read v <<< $(hg --version)
+    feature_description="${v%% (*}"
     v="${v##*version }"
     v="${v%%)*}"
     feature_version="${v}"

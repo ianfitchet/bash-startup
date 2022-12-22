@@ -1,7 +1,7 @@
 
 case "${OS_NAME}" in
 SunOS)
-    
+
     tcl_setup ()
     {
 	typeset dist="$1"
@@ -11,13 +11,23 @@ SunOS)
 	feature_description="use TCL from ${prefix}${dist}"
 	feature_version="${dist}"
     }
-    
+
     newest_release /usr/local/tcl tcl_setup
     ;;
 *)
-    feature_description="(Solaris)"
+    feature_description="n/a"
     ;;
 esac
+
+if type -p tclsh >/dev/null 2>&1 ; then
+    {
+	feature_description="Tcl"
+	typeset v
+	read v
+
+	feature_version="${v}"
+    } < <(tclsh <<<"puts \$tcl_version")
+fi
 
 provide tcl "${feature_description}" "${feature_version}"
 unset feature_description feature_version

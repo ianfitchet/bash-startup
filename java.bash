@@ -7,16 +7,24 @@ SunOS)
     feature_description="Java setup"
     ;;
 *)
-    feature_description="(Solaris)"
+    feature_description="n/a"
     ;;
 esac
 
 if type -p java >/dev/null 2>&1 ; then
-    typeset v
-    read v <<< $(java -version 2>&1)
-    v="${v#*\"}"
-    v="${v%%\"*}"
-    feature_version="${v}"
+    {
+	typeset v d
+
+	# openjdk version "1.8.0_322"
+	read v
+	v="${v#*\"}"
+	v="${v%%\"*}"
+	feature_version="${v}"
+
+	# OpenJDK Runtime Environment (build 1.8.0_322-b06)
+	read d
+	feature_description="${d%% (*}"
+    } < <(java -version 2>&1)
 fi
 
 provide java "${feature_description}" "${feature_version}"

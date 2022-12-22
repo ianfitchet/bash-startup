@@ -1,6 +1,6 @@
 case "${OS_NAME}" in
 SunOS)
-    
+
     emacs_setup ()
     {
 	typeset dist="$1"
@@ -14,9 +14,19 @@ SunOS)
     newest_release /usr/local/emacs- emacs_setup
     ;;
 *)
-    feature_description="(Solaris)"
+    feature_description="Emacs"
     ;;
 esac
+
+if type -p emacs >/dev/null 2>&1 ; then
+    {
+	typeset v
+	read v
+
+	feature_description="${v% *}"
+	feature_version="${v##* }"
+    } < <(emacs --version | head -1)
+fi
 
 provide emacs "${feature_description}" "${feature_version}"
 unset feature_description feature_version

@@ -27,18 +27,27 @@ SunOS)
     esac
     ;;
 *)
-    feature_description="(Solaris)"
+    feature_description="n/a"
     ;;
 esac
 
 if type -p perl >/dev/null 2>&1 ; then
     {
+	feature_description="Perl"
 	typeset l v
 	read l
 	read v
 	
-	v="${v##*perl, v}"
-	v="${v%% *}"
+	case "${v}" in
+	*perl,*)
+	    v="${v##*perl, v}"
+	    v="${v%% *}"
+	    ;;
+	*)
+	    v="${v##* (v}"
+	    v="${v%%) *}"
+	    ;;
+	esac
 	feature_version="${v}"
     } < <(perl -v)
 fi

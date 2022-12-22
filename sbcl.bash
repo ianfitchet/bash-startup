@@ -15,7 +15,7 @@ SunOS)
     newest_release /usr/local/sbcl- sbcl_setup
     ;;
 *)
-    feature_description="(Solaris)"
+    feature_description="n/a"
     ;;
 esac
 

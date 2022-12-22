@@ -26,10 +26,12 @@ error ()
 _uname ()
 {
     typeset __uname
-    __uname=( $(uname -mrps) )
+    __uname=( $(uname -snrmp) )
 
     OS_NAME="${__uname[0]}"
-    OS_REV="${__uname[1]}"
+    HOSTNAME="${__uname[1]}"
+    HOST=${HOSTNAME%%.*}
+    OS_REV="${__uname[2]}"
 
     typeset OIFS="${IFS}"
     IFS=.
