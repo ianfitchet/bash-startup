@@ -4,13 +4,18 @@ if flag_set_p "i" ; then
 
     if type -p git > /dev/null ; then
 	git_version=( $(git --version) )
-	for git_completion in /usr/share/doc/git{,-${git_version[2]},-core}/contrib/completion ; do
+
+	# Discover the git completion subdirectory first
+	# usually /usr/share/doc/git*/contrib/completion
+	# FreeBSD /usr/local/share/git-core/contrib/completion/git-prompt.sh
+	for git_completion in /usr/share/doc/git{,-${git_version[2]},-core}/contrib/completion /usr/local/share/git-core/contrib/completion ; do
 	    git_bash_completion=${git_completion}/git-completion.bash
 	    if [[ -f ${git_bash_completion} ]] ; then
 		. ${git_bash_completion}
 		break
 	    fi
 	done
+
 	git_prompt=${git_completion}/git-prompt.sh
 	if [[ -f ${git_prompt} ]] ; then
 	    . ${git_prompt}
