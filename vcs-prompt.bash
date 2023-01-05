@@ -8,9 +8,21 @@ if flag_set_p "i" ; then
 	# Discover the git completion subdirectory first
 	# usually /usr/share/doc/git*/contrib/completion
 	# FreeBSD /usr/local/share/git-core/contrib/completion/git-prompt.sh
+	# Mac OS  $(xcode-select -p)/usr/share/git-core
 
-	# Ubuntu uses /usr/share/bash-completion/completions/git
-	for git_completion in /usr/share/doc/git{,-${git_version[2]},-core}/contrib/completion /usr/local/share/git-core/contrib/completion ; do
+	# Ubuntu uses /usr/share/bash-completion/completions/git directly
+set -x
+	gcds=( /usr/share/doc/git{,-${git_version[2]},-core}/contrib/completion )
+	case "${OS_NAME}" in
+	FreeBSD)
+		gcds+=( /usr/local/share/git-core/contrib/completion )
+		;;
+	Darwin)
+		gcds+=( $(xcode-select -p)/usr/share/git-core )
+		;;
+	esac
+
+	for git_completion in "${gcds[*]}" ; do
 	    git_bash_completion=${git_completion}/git-completion.bash
 	    if [[ -f ${git_bash_completion} ]] ; then
 		. ${git_bash_completion}
@@ -30,6 +42,7 @@ if flag_set_p "i" ; then
 		__git_ps1 () { : ; }
 	    fi
 	done
+set +x
     fi
 
     if type -p hg > /dev/null ; then
