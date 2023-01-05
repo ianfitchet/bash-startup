@@ -17,6 +17,9 @@ if flag_set_p "i" ; then
 	FreeBSD)
 		gcds+=( /usr/local/share/git-core/contrib/completion )
 		;;
+	NetBSD)
+		gcds+=( /usr/pkg/share/examples/git )
+		;;
 	Darwin)
 		gcds+=( $(xcode-select -p)/usr/share/git-core )
 		;;
