@@ -11,7 +11,7 @@ if flag_set_p "i" ; then
 	# Mac OS  $(xcode-select -p)/usr/share/git-core
 
 	# Ubuntu uses /usr/share/bash-completion/completions/git directly
-set -x
+
 	gcds=( /usr/share/doc/git{,-${git_version[2]},-core}/contrib/completion )
 	case "${OS_NAME}" in
 	FreeBSD)
@@ -42,7 +42,6 @@ set -x
 		__git_ps1 () { : ; }
 	    fi
 	done
-set +x
     fi
 
     if type -p hg > /dev/null ; then
