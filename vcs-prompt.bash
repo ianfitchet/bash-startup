@@ -22,7 +22,7 @@ if flag_set_p "i" ; then
 		;;
 	esac
 
-	for git_completion in "${gcds[*]}" ; do
+	for git_completion in ${gcds[*]} ; do
 	    git_bash_completion=${git_completion}/git-completion.bash
 	    if [[ -f ${git_bash_completion} ]] ; then
 		. ${git_bash_completion}
